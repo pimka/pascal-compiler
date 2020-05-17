@@ -47,7 +47,10 @@ def p_variable_declaration_list(t):
 
 
 def p_variable_declaration(t):
-    """variable_declaration : identifier COLON type SEMICOLON"""
+    """variable_declaration : identifier COLON type SEMICOLON
+    | identifier EQ structured_type SEMICOLON
+    | identifier COLON structured_type SEMICOLON
+    """
     t[0] = Node('var', t[1], t[3])
 
 
@@ -118,6 +121,40 @@ def p_type(t):
     | TSTRING """
     t[0] = Node('type', t[1].lower())
 
+def p_array(t):
+    """array : ARRAY LBRACKET base_type RBRACKET OF type"""
+    t[0] = Node('type', t[1].lower(), t[3], t[6])
+
+def p_base_type(t):
+    """base_type : simple_type
+    | structured_type
+    """
+    t[0] = t[1]
+
+def p_simple_type(t):
+    """simple_type : scalar_type
+    | subrange_type
+    | identifier
+    """
+    t[0] = t[1]
+
+def p_scalar_type(t):
+    """scalar_type : identifier"""
+    t[0] = t[1]
+
+def p_subrange_type(t):
+    """subrange_type : element RANGE element"""
+    t[0] = Node('subrange', t[1], t[3])
+
+def p_structured_type(t):
+    """structured_type : array
+    | set_type
+    """
+    t[0] = t[1]
+
+def p_set_type(t):
+    """set_type : SET OF base_type"""
+    t[0] = Node('type', t[1].lower(), t[3])
 
 def p_statement_part(t):
     """statement_part : BEGIN statement_sequence END"""
@@ -311,4 +348,4 @@ def p_char(t):
 
 def p_error(t):
     print(f"Syntax error in input, in line {t.lineno}!")
-    sys.exit()
+    #sys.exit()

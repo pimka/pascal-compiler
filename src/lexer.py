@@ -6,7 +6,7 @@ QUOTE = r'(\'|")'
 
 tokens = (
     # assignment
-    'IDENTIFIER', 'ASSIGNMENT', 'SEMICOLON', 'COLON', 'COMMA', 'COMMENT',
+    'IDENTIFIER', 'ASSIGNMENT', 'SEMICOLON', 'COLON', 'COMMA',
 
     # main
     'PROGRAM', 'DOT',
@@ -34,6 +34,8 @@ tokens = (
 
     # types names
     'TREAL', 'TINTEGER', 'TSTRING', 'TCHAR',
+
+    'LBRACKET', 'RBRACKET', 'RANGE', 'ARRAY', 'OF', 'SET'
 )
 
 t_DOT = r"\."
@@ -41,6 +43,7 @@ t_ASSIGNMENT = r":="
 t_SEMICOLON = r";"
 t_COLON = r":"
 t_COMMA = r","
+t_RANGE = r"\.\."
 
 t_PLUS = r"\+"
 t_MINUS = r"\-"
@@ -56,8 +59,8 @@ t_GTE = r"\>\="
 
 t_LPAREN = r"\("
 t_RPAREN = r"\)"
-#t_LBRACKET = r"\["
-#t_RBRACKET = r"\]"
+t_LBRACKET = r"\["
+t_RBRACKET = r"\]"
 
 t_REAL = r"(\-)*[0-9]+\.[0-9]+"
 t_INTEGER = r"(\-)*[0-9]+"
@@ -76,6 +79,8 @@ keywords = {
     'procedure': 'PROCEDURE', 'function': 'FUNCTION',
 
     'real': 'TREAL', 'integer': 'TINTEGER', 'string': 'TSTRING', 'char': 'TCHAR',
+
+    'array':'ARRAY', 'of':'OF', 'set':'SET'
 }
 
 t_ignore = ' \t'
@@ -115,11 +120,6 @@ def t_STRING(t):
                 new_str += c
     t.value = new_str
     return t
-
-
-def t_COMMENT(t):
-    r"{[^}]*}"
-    pass
 
 
 def t_newline(t):

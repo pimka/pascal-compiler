@@ -127,6 +127,15 @@ def check(node):
             var_name = node.args[0].args[0]
             var_type = node.args[1].args[0]
             set_var(var_name, var_type)
+            if var_type == 'array':
+                check(node.args[1].args[1])
+        elif node.type in ['subrange']:
+            var1 = node.args[0].args[0]
+            var2 = node.args[1].args[0]
+            if var1.type != var2.type:
+                raise Exception(f'{var1.type} should be equal {var2.type}')
+            if var1.args[0] >= var2.args[0]:
+                raise Exception(f'{var1.args[0]} should be less then {var2.args[0]}')
         elif node.type in ['function', 'procedure']:
             head = node.args[0]
             name = head.args[0].args[0].lower()
@@ -136,7 +145,7 @@ def check(node):
                 args = []
             else:
                 args = flatten(head.args[1])
-                args = map(lambda x: (x.args[0].args[0], x.args[1].args[0]), args)
+                args = list(map(lambda x: (x.args[0].args[0], x.args[1].args[0]), args))
 
             if node.type == 'procedure':
                 rettype = 'void'
@@ -185,7 +194,7 @@ def check(node):
                 if a != 'boolean':
                     raise Exception(f'{op} requires a boolean. Got {a} instead.')
         elif node.type == 'op':
-            op = node.args[0].args[1]
+            op = node.args[0].args[0]
             vt1 = check(node.args[1])
             vt2 = check(node.args[2])
             if vt1 != vt2:
